@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_calculator/keyboard.dart';
+import 'package:flutter_calculator/keyboard_on_pressed.dart';
 import 'package:flutter_calculator/text_containers.dart';
 import 'package:math_expressions/math_expressions.dart';
 
@@ -38,16 +39,21 @@ class _MyHomePageState extends State<MyHomePage> {
   String result;
   String expression;
   bool resetEquation = false;
+  KeyboardOnPressed keyboardOnPressed;
 
   @override
   void initState() {
     super.initState();
     equation = "0";
     result = "0";
+    keyboardOnPressed = KeyboardOnPressed(onButtonPressed: (buttonText) {
+      _equation(buttonText);
+    });
   }
 
+
   void _equation(String val) {
-    setState(() async {
+    setState(() {
       if (resetEquation) {
         equation = "0";
         resetEquation = false;
@@ -81,7 +87,7 @@ class _MyHomePageState extends State<MyHomePage> {
         case "-":
         case "÷":
         case "×":
-          if (equation.length == 1) {
+          if (equation.length == 1 && equation == "0") {
             equation = result + val;
           } else
             equation += val;
@@ -113,102 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Expanded(flex: 3, child: TextContainers(equation, 3)),
           TextContainers(result, 1),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: Table(
-                  children: [
-                    TableRow(
-                      children: [
-                        _button("AC", Colors.grey[800]),
-                        _button("÷", Colors.grey[800]),
-                        _button("×", Colors.grey[800]),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("7", Colors.grey[600]),
-                        _button("8", Colors.grey[600]),
-                        _button("9", Colors.grey[600]),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("4", Colors.grey[600]),
-                        _button("5", Colors.grey[600]),
-                        _button("6", Colors.grey[600]),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("1", Colors.grey[600]),
-                        _button("2", Colors.grey[600]),
-                        _button("3", Colors.grey[600]),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("0", Colors.grey[600]),
-                        _button("00", Colors.grey[600]),
-                        _button(".", Colors.grey[600]),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.25,
-                child: Table(
-                  children: [
-                    TableRow(
-                      children: [
-                        _button("⌫", Colors.orange),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("-", Colors.orange),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("+", Colors.orange),
-                      ],
-                    ),
-                    TableRow(
-                      children: [
-                        _button("=", Colors.orange, buttonHeight: 2),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
+          Keyboard(keyboardOnPressed),
         ],
-      ),
-    );
-  }
-
-  Widget _button(String buttonText, Color color, {double buttonHeight = 1
-//    , double buttonWidth = 1
-      }) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: MaterialButton(
-        height: MediaQuery.of(context).size.height * 0.1 * buttonHeight,
-//        minWidth: MediaQuery.of(context).size.width * 0.1 * buttonWidth,
-        child: Text(
-          buttonText,
-          style: TextStyle(fontSize: 24, color: Colors.white),
-        ),
-        color: color,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        onPressed: () => _equation(buttonText),
       ),
     );
   }
